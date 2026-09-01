@@ -1,0 +1,410 @@
+[
+  {
+    "case_id": "C01",
+    "root_cause": "Router sub-interface Gi0/0.10 is administratively down",
+    "osi_layer": "Layer 3",
+    "confidence": "high",
+    "evidence": "GigabitEthernet0/0.10  10.10.10.1  YES manual administratively down  down",
+    "next_command": "show ip route",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: Router sub-interface Gi0/0.10 is administratively down",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C02",
+    "root_cause": "Trunk link between SW1 and SW2 is down / not configured as trunk",
+    "osi_layer": "Layer 2",
+    "confidence": "high",
+    "evidence": "VLAN 20  Engineering  active  Fa0/5, Fa0/6",
+    "next_command": "show mac address-table",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: Trunk link between SW1 and SW2 is down / not configured as trunk",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C03",
+    "root_cause": "Missing 'ip helper-address' on router sub-interface, DHCP broadcast not relayed",
+    "osi_layer": "Layer 3",
+    "confidence": "high",
+    "evidence": "Pool VLAN30 : 10.30.30.10 - 10.30.30.100",
+    "next_command": "show ip route",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: Missing 'ip helper-address' on router sub-interface, DHCP broadcast not relayed",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C04",
+    "root_cause": "DHCP scope for VLAN 40 is nearly exhausted, causing some clients to fall back to APIPA.",
+    "osi_layer": "Layer 3",
+    "confidence": "medium",
+    "evidence": "DHCP conflict log shows 10.40.40.15 detected via ping",
+    "next_command": "show ip dhcp pool VLAN40",
+    "fix_steps": [
+      "Expand the DHCP pool size",
+      "Monitor lease usage",
+      "Re-test client DHCP requests"
+    ]
+  },
+  {
+    "case_id": "C05",
+    "root_cause": "DNS server address unreachable / not configured on router acting as forwarder",
+    "osi_layer": "Layer 7",
+    "confidence": "high",
+    "evidence": "DNS request timed out.",
+    "next_command": "show running-config | include dns",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: DNS server address unreachable / not configured on router acting as forwarder",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C06",
+    "root_cause": "Serial interface line protocol down (clocking/encapsulation mismatch)",
+    "osi_layer": "Layer 1/2",
+    "confidence": "high",
+    "evidence": "Serial0/0/0  192.168.1.1  YES manual up  down",
+    "next_command": "show interfaces status",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: Serial interface line protocol down (clocking/encapsulation mismatch)",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C07",
+    "root_cause": "Sub-interface for VLAN 70 not configured / shut down, so network is missing from routing table",
+    "osi_layer": "Layer 3",
+    "confidence": "high",
+    "evidence": "GigabitEthernet0/0.70  unassigned  YES unset administratively down  down",
+    "next_command": "show ip route",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: Sub-interface for VLAN 70 not configured / shut down, so network is missing from routing table",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C08",
+    "root_cause": "OSPF neighbor adjacency not forming due to missing/incorrect network statement",
+    "osi_layer": "Layer 3",
+    "confidence": "high",
+    "evidence": "! router ospf 1 not applied to this interface / wrong network statement",
+    "next_command": "show ip route",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: OSPF neighbor adjacency not forming due to missing/incorrect network statement",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C09",
+    "root_cause": "Static route to 10.2.2.0 is missing from the routing table entirely.",
+    "osi_layer": "Layer 3",
+    "confidence": "medium",
+    "evidence": "show ip route static returns no output",
+    "next_command": "show running-config | include route",
+    "fix_steps": [
+      "Re-enter the static route command",
+      "Verify with show ip route static"
+    ]
+  },
+  {
+    "case_id": "C10",
+    "root_cause": "Outside interface missing 'ip nat outside' command, so NAT overload never triggers",
+    "osi_layer": "Layer 3",
+    "confidence": "high",
+    "evidence": "! GigabitEthernet0/1 missing 'ip nat outside'",
+    "next_command": "show ip route",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: Outside interface missing 'ip nat outside' command, so NAT overload never triggers",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C11",
+    "root_cause": "NAT access-list does not include the VLAN 90 subnet",
+    "osi_layer": "Layer 3",
+    "confidence": "high",
+    "evidence": "(10.90.90.0/24 not included)",
+    "next_command": "show ip route",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: NAT access-list does not include the VLAN 90 subnet",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C12",
+    "root_cause": "ACL rule ordering error: permit-any placed before deny-internal, so deny never matches (implicit/explicit misconfig)",
+    "osi_layer": "Layer 3/Security",
+    "confidence": "high",
+    "evidence": "! (deny rule for internal subnet never applied / wrong order)",
+    "next_command": "show ip route",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: ACL rule ordering error: permit-any placed before deny-internal, so deny never matches (implicit/explicit misconfig)",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C13",
+    "root_cause": "ACL 101 is correctly blocking unauthorized access to the finance server as designed.",
+    "osi_layer": "Layer 3/4",
+    "confidence": "high",
+    "evidence": "ACL 101 shows deny rules for host 10.5.5.10 on ports 80 and 443",
+    "next_command": "show access-lists 101",
+    "fix_steps": [
+      "No action needed, ACL is functioning as intended"
+    ]
+  },
+  {
+    "case_id": "C14",
+    "root_cause": "VLAN 100 (wireless) not permitted on the trunk link toward the AP's switch",
+    "osi_layer": "Layer 2",
+    "confidence": "high",
+    "evidence": "Gi0/1  allowed vlans: 1,10,20,30,40 (VLAN 100 not in allowed list)",
+    "next_command": "show mac address-table",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: VLAN 100 (wireless) not permitted on the trunk link toward the AP's switch",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C15",
+    "root_cause": "RADIUS server interface/link is down, authentication requests never reach the server",
+    "osi_layer": "Layer 1/7",
+    "confidence": "high",
+    "evidence": "Gi0/0  down  down",
+    "next_command": "show interfaces status",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: RADIUS server interface/link is down, authentication requests never reach the server",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C16",
+    "root_cause": "Physical interface down - cable/port issue, not a Layer 3 problem",
+    "osi_layer": "Layer 1",
+    "confidence": "high",
+    "evidence": "FastEthernet0/12 is down, line protocol is down (notconnect)",
+    "next_command": "show interfaces status",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: Physical interface down - cable/port issue, not a Layer 3 problem",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C17",
+    "root_cause": "A switching loop is causing MAC address instability between Fa0/3 and Fa0/9.",
+    "osi_layer": "Layer 2/3",
+    "confidence": "medium",
+    "evidence": "MAC address 0011.2233.4455 seen flapping between two ports",
+    "next_command": "show spanning-tree vlan 20",
+    "fix_steps": [
+      "Check for a physical loop between the two ports",
+      "Enable/verify spanning-tree",
+      "Trace both cable runs"
+    ]
+  },
+  {
+    "case_id": "C18",
+    "root_cause": "IP addressing mismatch: routers are not on the same subnet despite link being physically up",
+    "osi_layer": "Layer 3",
+    "confidence": "high",
+    "evidence": "(subnets do not overlap - /30 mismatch)",
+    "next_command": "show ip route",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: IP addressing mismatch: routers are not on the same subnet despite link being physically up",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C19",
+    "root_cause": "A network loop has formed after adding SW7, causing an outage on VLAN 10.",
+    "osi_layer": "Layer 2",
+    "confidence": "medium",
+    "evidence": "Gi0/2 shown as Altn/BLK on SW1's spanning-tree table",
+    "next_command": "show spanning-tree vlan 10 detail",
+    "fix_steps": [
+      "Immediately shut down one of the redundant links to break the loop"
+    ]
+  },
+  {
+    "case_id": "C20",
+    "root_cause": "Configuration was never saved (write memory not run); sub-interface config lost on reload",
+    "osi_layer": "Layer 3",
+    "confidence": "high",
+    "evidence": "(no output returned)",
+    "next_command": "show ip route",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: Configuration was never saved (write memory not run); sub-interface config lost on reload",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C21",
+    "root_cause": "DNS server missing external forwarder configuration for non-local domains",
+    "osi_layer": "Layer 7",
+    "confidence": "high",
+    "evidence": "*** 10.1.1.53 can't find google.com: Non-existent domain",
+    "next_command": "show running-config | include dns",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: DNS server missing external forwarder configuration for non-local domains",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C22",
+    "root_cause": "Internal server 10.1.1.20 is down or not responding to requests.",
+    "osi_layer": "Layer 3",
+    "confidence": "low",
+    "evidence": "NAT translation table shows an active entry for 10.1.1.20:80",
+    "next_command": "ping 10.1.1.20 from R1",
+    "fix_steps": [
+      "Check if the server process is running",
+      "Restart the web service on the server"
+    ]
+  },
+  {
+    "case_id": "C23",
+    "root_cause": "No router sub-interface exists for VLAN 110 - inter-VLAN routing not possible until it is created",
+    "osi_layer": "Layer 3",
+    "confidence": "high",
+    "evidence": "(no output returned)",
+    "next_command": "show ip route",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: No router sub-interface exists for VLAN 110 - inter-VLAN routing not possible until it is created",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C24",
+    "root_cause": "ACL missing explicit permit for the admin management subnet before implicit/explicit deny",
+    "osi_layer": "Layer 3/4",
+    "confidence": "high",
+    "evidence": "! (permit statement for admin subnet missing entirely)",
+    "next_command": "show ip route",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: ACL missing explicit permit for the admin management subnet before implicit/explicit deny",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C25",
+    "root_cause": "Static printer IP not excluded from DHCP scope, causing DHCP to lease the same address to another device",
+    "osi_layer": "Layer 3",
+    "confidence": "high",
+    "evidence": "10.20.20.50  <-- leased to a laptop, same as printer's static IP",
+    "next_command": "show ip route",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: Static printer IP not excluded from DHCP scope, causing DHCP to lease the same address to another device",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C26",
+    "root_cause": "Missing static or dynamic route on R2 toward the destination network",
+    "osi_layer": "Layer 3",
+    "confidence": "high",
+    "evidence": "(no route to 10.1.1.0/24 destination network)",
+    "next_command": "show ip route",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: Missing static or dynamic route on R2 toward the destination network",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C27",
+    "root_cause": "Guest SSID incorrectly mapped to the corporate VLAN instead of the isolated guest VLAN",
+    "osi_layer": "Layer 2",
+    "confidence": "high",
+    "evidence": "Corp-SSID          10",
+    "next_command": "show mac address-table",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: Guest SSID incorrectly mapped to the corporate VLAN instead of the isolated guest VLAN",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C28",
+    "root_cause": "Native VLAN mismatch across trunk link causes CDP warnings and potential VLAN leakage",
+    "osi_layer": "Layer 2",
+    "confidence": "high",
+    "evidence": "Gi0/3 99",
+    "next_command": "show mac address-table",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: Native VLAN mismatch across trunk link causes CDP warnings and potential VLAN leakage",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C29",
+    "root_cause": "Host-based firewall on the server itself is blocking traffic from remote subnets - not a network device issue",
+    "osi_layer": "Layer 3/Host",
+    "confidence": "high",
+    "evidence": "Rule 1: DENY from 0.0.0.0/0 except 10.1.1.0/24 (host firewall active)",
+    "next_command": "show ip route",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: Host-based firewall on the server itself is blocking traffic from remote subnets - not a network device issue",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  },
+  {
+    "case_id": "C30",
+    "root_cause": "Port security violation: new NIC MAC address exceeded max-MAC limit, shutting the port down",
+    "osi_layer": "Layer 2",
+    "confidence": "high",
+    "evidence": "Security violation count: 1  Max MAC addresses: 1  Violation mode: shutdown",
+    "next_command": "show mac address-table",
+    "fix_steps": [
+      "Verify evidence with the suggested next command",
+      "Apply the targeted fix for: Port security violation: new NIC MAC address exceeded max-MAC limit, shutting the port down",
+      "Re-test the original symptom",
+      "Have a human reviewer approve the change before deployment"
+    ]
+  }
+]

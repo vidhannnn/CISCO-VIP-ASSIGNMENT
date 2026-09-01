@@ -1,0 +1,153 @@
+case_id,symptom,topology_note,show_output,expected_fault,osi_layer,concept_tag,severity
+C01,PC1 (VLAN 10) gets an IP via DHCP but cannot ping its default gateway.,"PC1 -- Fa0/1 (SW1, access VLAN 10) -- SW1 trunk -- R1 sub-interface Gi0/0.10 (router-on-a-stick)","SW1# show vlan brief
+VLAN 10  Sales   active  Fa0/1
+
+SW1# show interfaces trunk
+Port  Mode  Encapsulation  Status   Native vlan
+Gi0/1 on    802.1q         trunking 1
+
+R1# show ip interface brief
+GigabitEthernet0/0.10  10.10.10.1  YES manual administratively down  down",Router sub-interface Gi0/0.10 is administratively down,Layer 3,VLAN/Router-on-a-stick,High
+C02,"PC2 and PC3 are both in VLAN 20 but cannot ping each other, though both can reach the gateway.",PC2 -- SW1 Fa0/5 (VLAN 20) ; PC3 -- SW2 Fa0/5 (VLAN 20) ; SW1-SW2 trunk link,"SW1# show interfaces trunk
+(no trunk ports listed - link down)
+
+SW2# show vlan brief
+VLAN 20  Engineering  active  Fa0/5
+
+SW1# show vlan brief
+VLAN 20  Engineering  active  Fa0/5, Fa0/6",Trunk link between SW1 and SW2 is down / not configured as trunk,Layer 2,VLAN/Trunking,High
+C03,New laptop on VLAN 30 does not receive an IP address at all (APIPA 169.254.x.x).,PC4 -- SW3 Fa0/8 (VLAN 30) -- SW3 trunk -- R1 (DHCP relay via ip helper-address),"R1# show run interface Gi0/0.30
+interface GigabitEthernet0/0.30
+ encapsulation dot1Q 30
+ ip address 10.30.30.1 255.255.255.0
+! (no ip helper-address configured)
+
+DHCP-SRV# show ip dhcp pool VLAN30
+Pool VLAN30 : 10.30.30.10 - 10.30.30.100","Missing 'ip helper-address' on router sub-interface, DHCP broadcast not relayed",Layer 3,DHCP,High
+C04,"All hosts on VLAN 40 get 169.254.x.x addresses intermittently, and duplicate IP warnings appear.","DHCP server serving VLAN40, static host PC5 configured manually","DHCP-SRV# show ip dhcp conflict
+IP address       Detection method   Detection time
+10.40.40.15       Ping                Aug 20 2026 10:02
+
+PC5# ipconfig /all
+IPv4 Address. . . . . . . . . . . : 10.40.40.15 (static)",Static IP on PC5 conflicts with an address inside the DHCP scope,Layer 3,DHCP,Medium
+C05,Users on VLAN 50 can ping IP addresses but cannot browse to any website by name.,PC6 -- SW4 -- R2 -- ISP router (simulated) with DNS server 8.8.8.8,"PC6# ipconfig /all
+DNS Servers . . . . . . . . . . : 10.50.50.1
+
+R2# show run | include dns
+! no ip dns server / no ip name-server configured
+
+PC6# nslookup cisco.com
+DNS request timed out.",DNS server address unreachable / not configured on router acting as forwarder,Layer 7,DNS,Medium
+C06,Branch office PC cannot reach HQ server; ping to HQ gateway fails from branch router.,"Branch R3 -- Serial0/0/0 -- HQ R1, static routes configured","R3# show ip route
+S    10.1.1.0/24 [1/0] via 192.168.1.2
+
+R3# show ip interface brief
+Serial0/0/0  192.168.1.1  YES manual up  down",Serial interface line protocol down (clocking/encapsulation mismatch),Layer 1/2,WAN/Routing,High
+C07,"PC7 on VLAN 60 cannot reach the server on VLAN 70, but both are directly connected to R1.",R1 has Gi0/0.60 and Gi0/0.70 sub-interfaces; inter-VLAN routing enabled,"R1# show ip route
+C  10.60.60.0/24 is directly connected, GigabitEthernet0/0.60
+(10.70.70.0/24 network missing from routing table)
+
+R1# show ip interface brief
+GigabitEthernet0/0.70  unassigned  YES unset administratively down  down","Sub-interface for VLAN 70 not configured / shut down, so network is missing from routing table",Layer 3,Routing/VLAN,High
+C08,Remote site cannot reach HQ subnet 10.1.1.0/24 even though the WAN link is up.,Branch R3 <-> HQ R1 via OSPF area 0,"R3# show ip ospf neighbor
+(no output - no neighbors formed)
+
+R3# show run interface Se0/0/0
+interface Serial0/0/0
+ ip address 192.168.1.1 255.255.255.252
+! router ospf 1 not applied to this interface / wrong network statement",OSPF neighbor adjacency not forming due to missing/incorrect network statement,Layer 3,Routing/OSPF,High
+C09,Static route to remote branch was configured but traffic still fails; 'show ip route' shows the route missing.,R1 configured with 'ip route 10.2.2.0 255.255.255.0 192.168.2.2',"R1# show ip route static
+(no static routes shown)
+
+R1# show run | include route
+ip route 10.2.2.0 255.255.0.0 192.168.2.2","Incorrect subnet mask typed in static route (255.255.0.0 instead of 255.255.255.0), causing route rejection/overlap",Layer 3,Static Routing,Medium
+C10,PC8 can ping other hosts on the same VLAN but cannot reach the internet.,PC8 -- SW5 VLAN 80 -- R1 Gi0/0.80 -- NAT overload on R1 Gi0/1 (outside),"R1# show ip nat translations
+(empty)
+
+R1# show run | include nat
+interface GigabitEthernet0/0.80
+ ip nat inside
+! GigabitEthernet0/1 missing 'ip nat outside'","Outside interface missing 'ip nat outside' command, so NAT overload never triggers",Layer 3,NAT,High
+C11,"Some internal hosts can reach the internet, others on a different VLAN cannot.",VLAN 80 and VLAN 90 both routed through R1; NAT ACL only references VLAN 80,"R1# show access-lists
+Standard IP access list NAT-ACL
+    10 permit 10.80.80.0 0.0.0.255
+(10.90.90.0/24 not included)",NAT access-list does not include the VLAN 90 subnet,Layer 3,NAT/ACL,Medium
+C12,"Guest Wi-Fi users can reach internal file server, which should not be allowed.",WLC/AP guest VLAN 99 -- R1 -- ACL meant to isolate guests,"R1# show access-lists
+Extended IP access list GUEST-ACL
+    10 permit ip any any
+! (deny rule for internal subnet never applied / wrong order)","ACL rule ordering error: permit-any placed before deny-internal, so deny never matches (implicit/explicit misconfig)",Layer 3/Security,ACL/Wireless Security,High
+C13,"Employees cannot access the finance server (10.5.5.10) from the sales VLAN, but ping to gateway works.",R1 has ACL 101 applied inbound on Gi0/0.10 (Sales VLAN),"R1# show access-lists 101
+Extended IP access list 101
+    10 deny tcp any host 10.5.5.10 eq 80
+    20 deny tcp any host 10.5.5.10 eq 443
+    30 permit ip any any
+(unintended: legitimate HR subnet also blocked by rule 10)",Overly broad ACL entry blocks legitimate traffic from an unintended source subnet,Layer 3/4,ACL,Medium
+C14,Wireless clients connect to SSID but get 'limited connectivity' and no IP address.,"AP1 mapped to VLAN 100 (wireless), trunk to SW6 missing VLAN 100","SW6# show interfaces trunk
+Gi0/1  allowed vlans: 1,10,20,30,40 (VLAN 100 not in allowed list)",VLAN 100 (wireless) not permitted on the trunk link toward the AP's switch,Layer 2,VLAN/Wireless,High
+C15,Wireless clients associate to AP but authentication constantly fails (WPA2-Enterprise).,AP1 -- RADIUS server 10.100.100.5 configured on WLC,"WLC# show radius server
+Server 10.100.100.5  Auth-Port 1812  Status: DOWN
+
+RADIUS-SRV# show interface status
+Gi0/0  down  down","RADIUS server interface/link is down, authentication requests never reach the server",Layer 1/7,Wireless/AAA,High
+C16,"PC9 gets correct IP and gateway but cannot ping anything, even the gateway.",PC9 -- SW1 Fa0/12 (VLAN 10),"SW1# show interfaces Fa0/12
+FastEthernet0/12 is down, line protocol is down (notconnect)","Physical interface down - cable/port issue, not a Layer 3 problem",Layer 1,Physical/Interface,Medium
+C17,Two PCs on the same VLAN keep dropping connection intermittently; switch logs show MAC flapping.,PC10 and PC11 both configured with 10.20.20.15 statically,"SW1# show mac address-table | include 0011.22
+VLAN  Mac Address      Type    Ports
+20    0011.2233.4455   DYNAMIC Fa0/3
+20    0011.2233.4455   DYNAMIC Fa0/9   <-- flapping between ports",Duplicate IP address (10.20.20.15) assigned to two different hosts causing MAC/ARP instability,Layer 2/3,Duplicate IP,Medium
+C18,Router-to-router link between R1 and R2 shows up/up but OSPF neighbors never form.,R1 Gi0/0 10.0.0.1/30 -- R2 Gi0/0 10.0.0.6/30 (mismatched subnet),"R1# show ip interface brief
+GigabitEthernet0/0  10.0.0.1  YES manual up up
+
+R2# show ip interface brief
+GigabitEthernet0/0  10.0.0.6  YES manual up up
+(subnets do not overlap - /30 mismatch)",IP addressing mismatch: routers are not on the same subnet despite link being physically up,Layer 3,Routing/Addressing,High
+C19,"After adding a new switch, spanning-tree keeps blocking a port users need, causing slow convergence complaints.","SW7 added between SW1 and SW2, forming a loop","SW1# show spanning-tree vlan 10
+Interface   Role  Sts  Cost
+Gi0/1       Root  FWD  4
+Gi0/2       Altn  BLK  4  <-- expected during redundancy, but root bridge is a low-end switch","Root bridge election chose a suboptimal (low-end) switch, causing inefficient traffic paths; priority not set on core switch",Layer 2,STP,Low
+C20,Server farm VLAN cannot be reached from anywhere after a router reload.,R1 sub-interface configs lost due to unsaved running-config,"R1# show run | section interface Gi0/0.50
+(no output returned)
+
+R1# show startup-config | include Gi0/0.50
+(no output returned)",Configuration was never saved (write memory not run); sub-interface config lost on reload,Layer 3,Config Management,High
+C21,Remote users report the internal DNS server resolves internal names but not external websites.,Internal DNS server 10.1.1.53 with no forwarder configured,"DNS-SRV# show running-config | include forwarder
+(no forwarders configured)
+
+PC12# nslookup google.com 10.1.1.53
+*** 10.1.1.53 can't find google.com: Non-existent domain",DNS server missing external forwarder configuration for non-local domains,Layer 7,DNS,Medium
+C22,PC13 in VLAN 10 can reach the internet but internal server 10.1.1.20 times out.,R1 has NAT overload matching all internal traffic including internal-to-internal,"R1# show ip nat translations
+Pro Inside global    Inside local     Outside local   Outside global
+tcp 203.0.113.5:5000 10.1.1.20:80    10.1.1.20:80    203.0.113.5:5000  <-- internal traffic incorrectly NAT'd","NAT ACL too broad, translating internal-to-internal traffic that should bypass NAT",Layer 3,NAT,Medium
+C23,New VLAN 110 was created but hosts placed in it cannot reach any other VLAN.,SW1 VLAN 110 created; R1 sub-interface not yet configured,"R1# show vlan brief (n/a - router)
+R1# show ip interface brief | include 110
+(no output returned)",No router sub-interface exists for VLAN 110 - inter-VLAN routing not possible until it is created,Layer 3,VLAN/Router-on-a-stick,High
+C24,Access-list applied to block Telnet to core switch also blocked legitimate SSH management traffic.,SW-CORE VTY lines with access-class applied,"SW-CORE# show access-lists MGMT-ACL
+Standard IP access list MGMT-ACL
+    10 deny   any
+! (permit statement for admin subnet missing entirely)",ACL missing explicit permit for the admin management subnet before implicit/explicit deny,Layer 3/4,ACL/Security,High
+C25,Printer on VLAN 20 loses network connectivity every time the switch reboots.,Printer configured with static IP outside the DHCP exclusion range,"DHCP-SRV# show ip dhcp excluded-address
+(no exclusions configured for 10.20.20.0/24)
+
+DHCP-SRV# show ip dhcp binding
+10.20.20.50  <-- leased to a laptop, same as printer's static IP","Static printer IP not excluded from DHCP scope, causing DHCP to lease the same address to another device",Layer 3,DHCP/Static IP,Medium
+C26,Site-to-site scenario: PC14 can ping R2 (next hop) but not any host beyond R2.,R2 missing default/static route toward destination network,"R2# show ip route
+C  192.168.1.0/24 is directly connected
+(no route to 10.1.1.0/24 destination network)",Missing static or dynamic route on R2 toward the destination network,Layer 3,Routing,Medium
+C27,Wireless guest network intermittently gets the wrong VLAN's IP address (corporate subnet instead of guest).,"AP1 SSID-to-VLAN mapping misconfigured, guest SSID tagged to VLAN 10 (corporate) instead of VLAN 99","WLC# show wlan summary
+WLAN Profile Name  VLAN
+Guest-SSID         10   <-- should be 99
+Corp-SSID          10",Guest SSID incorrectly mapped to the corporate VLAN instead of the isolated guest VLAN,Layer 2,Wireless/VLAN,High
+C28,Two access switches lose connectivity to the core switch after a native VLAN mismatch warning appears in logs.,"SW1 trunk native VLAN 1, SW-CORE trunk native VLAN 99","SW1# show interfaces trunk
+Port  Native vlan
+Gi0/1 1
+
+SW-CORE# show interfaces trunk
+Port  Native vlan
+Gi0/3 99",Native VLAN mismatch across trunk link causes CDP warnings and potential VLAN leakage,Layer 2,Trunking/Native VLAN,Medium
+C29,"Server 10.1.1.30 is reachable from its own VLAN but not from any remote VLAN, despite correct routing.",Host-based firewall on server blocking non-local subnets,"SERVER# show firewall rules
+Rule 1: DENY from 0.0.0.0/0 except 10.1.1.0/24 (host firewall active)",Host-based firewall on the server itself is blocking traffic from remote subnets - not a network device issue,Layer 3/Host,Host Firewall,Low
+C30,"After enabling port security on an access port, a legitimate PC lost connectivity and the port shows err-disabled.","SW1 Fa0/4 port-security max 1 MAC address, PC's NIC was replaced (new MAC)","SW1# show interfaces Fa0/4 status
+Fa0/4  1  err-disabled
+
+SW1# show port-security interface Fa0/4
+Security violation count: 1  Max MAC addresses: 1  Violation mode: shutdown","Port security violation: new NIC MAC address exceeded max-MAC limit, shutting the port down",Layer 2,Port Security,Medium

@@ -1,0 +1,31 @@
+case_id,duplicate_ip,wrong_mask,gateway_mismatch,interface_down,missing_vlan,missing_route,any_flag_raised
+C01,,,,Interface is administratively down (shutdown),VLAN trunking issue detected (missing from allowed list or native VLAN mismatch),,True
+C02,,,,,,,False
+C03,,,,,,,False
+C04,Possible duplicate IP indicator found (repeated address or conflict/flapping keyword),,,,,,True
+C05,,,,,,,False
+C06,,,,,,,False
+C07,,,,Interface is administratively down (shutdown),,,True
+C08,,,,,,Routing protocol neighbor adjacency not forming,True
+C09,,,,,,,False
+C10,,,,,,,False
+C11,,,,,,,False
+C12,,,,,,,False
+C13,Possible duplicate IP indicator found (repeated address or conflict/flapping keyword),,,,,,True
+C14,,,,,VLAN trunking issue detected (missing from allowed list or native VLAN mismatch),,True
+C15,,,,,,,False
+C16,,,,Physical interface down (cable/port issue),,,True
+C17,Possible duplicate IP indicator found (repeated address or conflict/flapping keyword),,,,,,True
+C18,,,,,,,False
+C19,,,,,,,False
+C20,,,,,,,False
+C21,Possible duplicate IP indicator found (repeated address or conflict/flapping keyword),,,,,,True
+C22,Possible duplicate IP indicator found (repeated address or conflict/flapping keyword),,,,,,True
+C23,,,,,VLAN or sub-interface configuration appears missing (no output returned),Destination network appears missing from the routing table,True
+C24,,,,,,,False
+C25,,,,,,,False
+C26,,,,,,Destination network appears missing from the routing table,True
+C27,,,,,,,False
+C28,,,,,VLAN trunking issue detected (missing from allowed list or native VLAN mismatch),,True
+C29,,,,,,,False
+C30,,,,Port is err-disabled (likely port-security violation),,,True
